@@ -79,7 +79,7 @@ export interface Pluto {
 }
 ```
 
-We currently support database wrappers for IndexDB, InMemory and are working together to bring you level-db with electron compatibility.
+We currently support database wrappers for IndexDB, InMemory, LevelDB.
 We are not going to stop here but ensure that our SDK can be used in any platform and language.
 
 ### Documentation & Contribution Guidelines
@@ -93,11 +93,10 @@ Pull requests are WELCOME!! please check the [Contribution guidelines](https://g
 ### How to use
 
 We currently provide 3 database storages - InMemory, IndexDB, and LevelDB.
-In order to use this package, you must first install the database and pass a storage engine.
+These modules are designed to be used with [`@atala/prism-wallet-sdk`](https://github.com/input-output-hk/atala-prism-wallet-sdk-ts)
 
 ```bash
-npm i @pluto-encrypted/database --save
-npm i @pluto-encrypted/inmemory --save
+npm i @atala/prism-wallet-sdk @pluto-encrypted/inmemory
 # or npm i @pluto-encrypted/indexdb --save
 # or npm i @pluto-encrypted/leveldb --save
 ```
@@ -105,102 +104,55 @@ npm i @pluto-encrypted/inmemory --save
 ### InMemory
 
 ```typescript
-import InMemory from "@pluto-encrypted/inmemory";
-import { Database } from "@pluto-encrypted/database";
-import { 
-    getDefaultCollections,
-    DIDCollection,
-    DIDPairCollection,
-    MediatorCollection,
-    PrivateKeyColletion,
-    CredentialCollection,
-    CredentialRequestMetadataCollection,
-    LinkSecretColletion,
-    MessageColletion
-} from "@pluto-encrypted/schemas";
-//default password must be 32 bytes long
-const defaultPassword = new Uint8Array(32).fill(1);
-const database = db = await Database.createEncrypted<{
-    dids: DIDCollection;
-    didpairs: DIDPairCollection;
-    mediators: MediatorCollection;
-    privatekeys: PrivateKeyColletion;
-    credentials: CredentialCollection;
-    credentialrequestmetadatas: CredentialRequestMetadataCollection;
-    linksecrets: LinkSecretColletion;
-    messages: MessageColletion;
-}>(
-    {
-        name: `my-db`,
-        encryptionKey: defaultPassword,
-        storage: InMemory,
-        collections: getDefaultCollections()
-    }
-);
+import { Agent, Domain, Store, Apollo, Pluto } from '@atala/prism-wallet-sdk'
+import InMemory from '@pluto-encrypted/inmemory'
+
+const mediatorDID = Domain.DID.fromString(mediatorDIDString)
+const store = new Store({
+  name: 'my-app-db',
+  storage: InMemory,
+  password: 'something secure 1235!'
+})
+const apollo = new Apollo()
+const pluto = new Pluto(store, apollo)
+
+const agent = Agent.initialize({ mediatorDID, pluto, apollo })
 ```
 
 ### IndexDB
 
 ```typescript
-import IndexDB from "@pluto-encrypted/indexdb";
-import { Database } from "@pluto-encrypted/database";
-import { 
-    getDefaultCollections,
-    DIDCollection,
-    DIDPairCollection,
-    MediatorCollection,
-    PrivateKeyColletion,
-    CredentialCollection,
-    CredentialRequestMetadataCollection,
-    LinkSecretColletion,
-    MessageColletion
-} from "@pluto-encrypted/schemas";
-//default password must be 32 bytes long
-const defaultPassword = new Uint8Array(32).fill(1);
-const database = db = await Database.createEncrypted<{
-    dids: DIDCollection;
-    didpairs: DIDPairCollection;
-    mediators: MediatorCollection;
-    privatekeys: PrivateKeyColletion;
-    credentials: CredentialCollection;
-    credentialrequestmetadatas: CredentialRequestMetadataCollection;
-    linksecrets: LinkSecretColletion;
-    messages: MessageColletion;
-}>(
-    {
-        name: `my-db`,
-        encryptionKey: defaultPassword,
-        storage: IndexDB,
-        collections: getDefaultCollections()
-    }
-);
+import { Agent, Domain, Store, Apollo, Pluto } from '@atala/prism-wallet-sdk'
+import IndexDB from '@pluto-encrypted/indexdb'
+
+const mediatorDID = Domain.DID.fromString(mediatorDIDString)
+const store = new Store({
+  name: 'my-app-db',
+  storage: IndexDB,
+  password: 'something secure 1235!'
+})
+const apollo = new Apollo()
+const pluto = new Pluto(store, apollo)
+
+const agent = Agent.initialize({ mediatorDID, pluto, apollo })
 ```
 
 ### LevelDB
 
 ```typescript
-import { createLevelDBStorage } from "@pluto-encrypted/leveldb";
-import { Database } from "@pluto-encrypted/database";
-//default password must be 32 bytes long
-const defaultPassword = new Uint8Array(32).fill(1);
-const database = db = await Database.createEncrypted<{
-    dids: DIDCollection;
-    didpairs: DIDPairCollection;
-    mediators: MediatorCollection;
-    privatekeys: PrivateKeyColletion;
-    credentials: CredentialCollection;
-    credentialrequestmetadatas: CredentialRequestMetadataCollection;
-    linksecrets: LinkSecretColletion;
-    messages: MessageColletion;
-}>(
-    {
-        name: `my-db`,
-        encryptionKey: defaultPassword,
-        storage: createLevelDBStorage({ 
-            dbName: "demo",
-            dbPath: "/tmp/demo" 
-        }),
-        collections: getDefaultCollections()
-    }
-);
+import { Agent, Domain, Store, Apollo, Pluto } from '@atala/prism-wallet-sdk'
+import { createLevelDBStorage } from '@pluto-encrypted/leveldb'
+
+const mediatorDID = Domain.DID.fromString(mediatorDIDString)
+const store = new Store({
+  name: 'my-app-db',
+  storage: createLevelDBStorage({
+    dbPath: '/tmp/my-app/db'
+  }),
+  password: 'something secure 1235!'
+})
+const apollo = new Apollo()
+const pluto = new Pluto(store, apollo)
+
+const agent = Agent.initialize({ mediatorDID, pluto, apollo })
 ```
