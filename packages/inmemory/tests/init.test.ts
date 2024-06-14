@@ -1,11 +1,10 @@
 import "./setup";
 
-import { describe, it, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, beforeEach, afterEach } from 'vitest';
 import { runTestSuite } from '@pluto-encrypted/test-suite';
 
 
 import InMemory from '../src'
-import sinon from "sinon";
 
 const keyData = new Uint8Array(32);
 

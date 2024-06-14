@@ -19,7 +19,7 @@ import * as schemas from './schemas'
 export const TEST_DATA_CHARSET = '0987654321ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzäöüÖÄßÜ[]{}\''
 export const TEST_DATA_CHARSET_LAST_SORTED = ensureNotFalsy(lastOfArray(TEST_DATA_CHARSET.split('').sort()))
 // const someEmojis = '😊💩👵🍌';
-export function randomStringWithSpecialChars (length: number) {
+export function randomStringWithSpecialChars(length: number) {
   return randomString(length, TEST_DATA_CHARSET)
 }
 
@@ -29,7 +29,7 @@ export interface SimpleHumanDocumentType {
   lastName: string
 }
 
-export function human (
+export function human(
   passportId: string = randomStringWithSpecialChars(12),
   age: number = randomNumber(10, 50),
   firstName: string = faker.person.firstName()
@@ -42,7 +42,7 @@ export function human (
   }
 }
 
-export function simpleHuman (): SimpleHumanDocumentType {
+export function simpleHuman(): SimpleHumanDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     firstName: faker.person.firstName(),
@@ -55,7 +55,7 @@ export interface SimpleHumanV3DocumentType {
   age: number
   oneOptional?: string
 }
-export function simpleHumanV3 (partial: Partial<SimpleHumanV3DocumentType> = {}): SimpleHumanV3DocumentType {
+export function simpleHumanV3(partial: Partial<SimpleHumanV3DocumentType> = {}): SimpleHumanV3DocumentType {
   const defaultObj = {
     passportId: randomStringWithSpecialChars(12),
     age: randomNumber(10, 50)
@@ -70,7 +70,7 @@ export interface SimpleHumanAgeDocumentType {
   passportId: string
   age: string
 }
-export function simpleHumanAge (partial: Partial<SimpleHumanAgeDocumentType> = {}): SimpleHumanAgeDocumentType {
+export function simpleHumanAge(partial: Partial<SimpleHumanAgeDocumentType> = {}): SimpleHumanAgeDocumentType {
   const defaultObj = {
     passportId: randomStringWithSpecialChars(12),
     age: randomNumber(10, 50) + ''
@@ -87,7 +87,7 @@ export interface HumanWithSubOtherDocumentType {
     age: number
   }
 }
-export function humanWithSubOther (): HumanWithSubOtherDocumentType {
+export function humanWithSubOther(): HumanWithSubOtherDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     other: {
@@ -100,7 +100,7 @@ export interface NoIndexHumanDocumentType {
   firstName: string
   lastName: string
 }
-export function NoIndexHuman (): NoIndexHumanDocumentType {
+export function NoIndexHuman(): NoIndexHumanDocumentType {
   return {
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName()
@@ -115,7 +115,7 @@ export interface NestedHumanDocumentType {
     level: number
   }
 }
-export function nestedHuman (partial: Partial<NestedHumanDocumentType> = {}): NestedHumanDocumentType {
+export function nestedHuman(partial: Partial<NestedHumanDocumentType> = {}): NestedHumanDocumentType {
   const defaultObj = {
     passportId: randomStringWithSpecialChars(12),
     firstName: faker.person.firstName(),
@@ -140,7 +140,7 @@ export interface DeepNestedHumanDocumentType {
     }
   }
 }
-export function deepNestedHuman (): DeepNestedHumanDocumentType {
+export function deepNestedHuman(): DeepNestedHumanDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     mainSkill: {
@@ -160,7 +160,7 @@ export interface BigHumanDocumentType {
   lastName: string
   age: number
 }
-export function bigHumanDocumentType (): BigHumanDocumentType {
+export function bigHumanDocumentType(): BigHumanDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     dnaHash: randomStringWithSpecialChars(12),
@@ -177,7 +177,7 @@ export interface HeroArrayDocumentType {
     damage: number
   }>
 }
-export function heroArray (): HeroArrayDocumentType {
+export function heroArray(): HeroArrayDocumentType {
   return {
     name: randomStringWithSpecialChars(6),
     skills: new Array(3).fill(0).map(() => {
@@ -193,7 +193,7 @@ export interface SimpleHeroArrayDocumentType {
   name: string
   skills: string[]
 }
-export function simpleHeroArray (partial: Partial<SimpleHeroArrayDocumentType> = {}): SimpleHeroArrayDocumentType {
+export function simpleHeroArray(partial: Partial<SimpleHeroArrayDocumentType> = {}): SimpleHeroArrayDocumentType {
   const defaultObj = {
     name: randomStringWithSpecialChars(6),
     skills: new Array(3).fill(0).map(() => randomStringWithSpecialChars(6))
@@ -209,7 +209,7 @@ export interface EncryptedHumanDocumentType {
   firstName: string
   secret: string
 }
-export function encryptedHuman (secret = randomStringWithSpecialChars(12)): EncryptedHumanDocumentType {
+export function encryptedHuman(secret = randomStringWithSpecialChars(12)): EncryptedHumanDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     firstName: faker.person.firstName(),
@@ -225,7 +225,7 @@ export interface EncryptedObjectHumanDocumentType {
     subname: string
   }
 }
-export function encryptedObjectHuman (): EncryptedObjectHumanDocumentType {
+export function encryptedObjectHuman(): EncryptedObjectHumanDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     firstName: faker.person.firstName(),
@@ -254,7 +254,7 @@ export interface EncryptedDeepHumanDocumentType {
     }
   }
 }
-export function encryptedDeepHumanDocumentType (): EncryptedDeepHumanDocumentType {
+export function encryptedDeepHumanDocumentType(): EncryptedDeepHumanDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     firstName: faker.person.firstName(),
@@ -280,7 +280,7 @@ export interface CompoundIndexDocumentType {
   passportCountry: string
   age: number
 }
-export function compoundIndex (): CompoundIndexDocumentType {
+export function compoundIndex(): CompoundIndexDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     passportCountry: randomStringWithSpecialChars(12),
@@ -293,7 +293,7 @@ export interface CompoundIndexNoStringDocumentType {
   passportCountry: Record<string, string>
   age: number
 }
-export function compoundIndexNoString (): CompoundIndexNoStringDocumentType {
+export function compoundIndexNoString(): CompoundIndexNoStringDocumentType {
   return {
     passportId: randomStringWithSpecialChars(12),
     passportCountry: { [randomStringWithSpecialChars(12)]: randomStringWithSpecialChars(12) },
@@ -302,10 +302,10 @@ export function compoundIndexNoString (): CompoundIndexNoStringDocumentType {
 }
 
 export interface NostringIndexDocumentType {
-  passportId: {}
+  passportId: { [name: string | number | symbol]: any }
   firstName: string
 }
-export function nostringIndex (): NostringIndexDocumentType {
+export function nostringIndex(): NostringIndexDocumentType {
   return {
     passportId: {},
     firstName: faker.person.firstName()
@@ -316,7 +316,7 @@ export interface RefHumanDocumentType {
   name: string
   bestFriend: string
 }
-export function refHuman (bestFriend?: string): RefHumanDocumentType {
+export function refHuman(bestFriend?: string): RefHumanDocumentType {
   return {
     name: randomStringWithSpecialChars(12),
     bestFriend
@@ -329,7 +329,7 @@ export interface RefHumanNestedDocumentType {
     bestFriend: string
   }
 }
-export function refHumanNested (bestFriend?: string): RefHumanNestedDocumentType {
+export function refHumanNested(bestFriend?: string): RefHumanNestedDocumentType {
   return {
     name: randomStringWithSpecialChars(12),
     foo: {
@@ -345,7 +345,7 @@ export interface HumanWithTimestampDocumentType {
   updatedAt: number
   deletedAt?: number
 }
-export function humanWithTimestamp (givenData: Partial<HumanWithTimestampDocumentType> = {}): HumanWithTimestampDocumentType {
+export function humanWithTimestamp(givenData: Partial<HumanWithTimestampDocumentType> = {}): HumanWithTimestampDocumentType {
   let ret = {
     id: randomStringWithSpecialChars(12),
     name: faker.person.firstName(),
@@ -375,7 +375,7 @@ export interface AverageSchemaDocumentType {
 }
 
 const averageSchemaForFieldLength = schemas.averageSchema() as any
-export function averageSchema (
+export function averageSchema(
   partial: Partial<AverageSchemaDocumentType> = {}
 ): AverageSchemaDocumentType {
   return Object.assign(
@@ -405,7 +405,7 @@ export interface PointDocumentType {
   x: number
   y: number
 }
-export function point (): PointDocumentType {
+export function point(): PointDocumentType {
   return {
     id: randomStringWithSpecialChars(12),
     x: faker.number.int(),
@@ -418,7 +418,7 @@ export interface HumanWithIdAndAgeIndexDocumentType {
   name: string
   age: number
 }
-export function humanWithIdAndAgeIndexDocumentType (
+export function humanWithIdAndAgeIndexDocumentType(
   age: number = randomNumber(1, 100)
 ): HumanWithIdAndAgeIndexDocumentType {
   return {
@@ -437,7 +437,7 @@ export interface HumanWithCompositePrimary {
     age: number
   }
 }
-export function humanWithCompositePrimary (partial: Partial<HumanWithCompositePrimary> = {}): HumanWithCompositePrimary {
+export function humanWithCompositePrimary(partial: Partial<HumanWithCompositePrimary> = {}): HumanWithCompositePrimary {
   const defaultObj = {
     firstName: faker.person.firstName(),
     lastName: faker.person.lastName(),

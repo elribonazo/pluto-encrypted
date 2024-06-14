@@ -59,7 +59,7 @@ import { type CipherWithOutput } from '@noble/ciphers/utils'
 
 export type { RxStorage } from 'rxdb'
 export type { CipherWithOutput } from '@noble/ciphers/utils'
-export const MINIMUM_PASSWORD_LENGTH: 8 = 8
+export const MINIMUM_PASSWORD_LENGTH = 8
 
 // We must keep nonce static to be able to restore the database later, user only has the password
 const nonce = Buffer.from('b47e1d4e5f7377c2e80a19b8', 'hex')

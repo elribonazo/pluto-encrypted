@@ -12,7 +12,6 @@ import type {
   RxStorage,
   RxStorageBulkWriteResponse,
   RxStorageInstance,
-  RxStorageInstanceCreationParams,
 } from 'rxdb'
 import {
   clone,
@@ -23,7 +22,6 @@ import {
   getPseudoSchemaForVersion,
   getQueryMatcher,
   getSortComparator,
-  newRxError,
   normalizeMangoQuery,
   now,
   parseRevision,
@@ -142,7 +140,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           devMode: false
         })
         const pkey = 'foobar'
-        let docData: RxDocumentWriteData<TestDocType> = {
+        const docData: RxDocumentWriteData<TestDocType> = {
           key: pkey,
           value: 'barfoo1',
           _deleted: false,

@@ -13,7 +13,8 @@
     "test": "npx lerna run --include-dependencies --stream test",
     "docs": "typedoc --options ./typedoc.markdown.cjs ",
     "docs-html": "typedoc --options ./typedoc.html.cjs ",
-    "release": "npx multi-semantic-release --deps.bump=satisfy --deps.release=inherit"
+    "release": "npx multi-semantic-release --deps.bump=satisfy --deps.release=inherit",
+    "prepare": "npx husky"
   },
   "author": "elribonazo@gmail.com",
   "license": "Apache-2.0",
@@ -35,7 +36,7 @@
     "@semantic-release/exec": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/github": "^8.1.0",
-    "@semantic-release/npm": "^9.0.2",
+    "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^10.0.3",
     "@types/node": "^20.5.0",
     "@types/sinon": "^17.0.2",
@@ -73,7 +74,7 @@
     "rollup-plugin-polyfill-node": "^0.12.0",
     "rollup-plugin-typescript": "^1.0.1",
     "rollup-plugin-typescript2": "^0.34.1",
-    "semantic-release": "^19.0.5",
+    "semantic-release": "^24.0.0",
     "semantic-release-monorepo": "^7.0.5",
     "sinon": "^16.1.3",
     "typedoc": "^0.24.8",

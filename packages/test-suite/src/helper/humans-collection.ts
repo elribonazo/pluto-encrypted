@@ -25,7 +25,7 @@ export async function create(
   eventReduce: boolean = true,
   storage: RxStorage<any, any>
 
-): Promise<RxCollection<HumanDocumentType, {}, {}>> {
+): Promise<RxCollection<HumanDocumentType, any, any>> {
   const db = await createRxDatabase<{ human: RxCollection<HumanDocumentType> }>({
     name: randomCouchString(10),
     storage,
@@ -57,11 +57,11 @@ export async function create(
   return collections[collectionName]!
 }
 
-export async function createBySchema<RxDocumentType = {}>(
+export async function createBySchema<RxDocumentType = any>(
   schema: RxJsonSchema<RxDocumentType>,
   name = 'human',
   storage: RxStorage<any, any>
-): Promise<RxCollection<RxDocumentType, {}, {}>> {
+): Promise<RxCollection<RxDocumentType, any, any>> {
   const db = await createRxDatabase<Record<string, RxCollection<RxDocumentType>>>({
     name: randomCouchString(10),
     storage,
@@ -88,7 +88,7 @@ export async function createAttachments(
   name = 'human',
   multiInstance = true,
   storage: RxStorage<any, any>
-): Promise<RxCollection<HumanDocumentType, {}, {}>> {
+): Promise<RxCollection<HumanDocumentType, any, any>> {
   if (!name) {
     name = 'human'
   }
