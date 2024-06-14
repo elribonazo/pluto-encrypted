@@ -61,7 +61,7 @@
     },
     {
       "command": "npm run test",
-      "cwd": "${workspaceFolder}/packages/iagon",
+      "cwd": "${workspaceFolder}/packages/indexdb",
       "name": "TEST",
       "request": "launch",
       "type": "node-terminal",

@@ -19,47 +19,19 @@
  * ```
  *
  */
-import { type RxStorage, RxStorageDefaultStatics, type RxStorageInstance, type RxStorageInstanceCreationParams, newRxError } from 'rxdb'
-import { type InMemorySettings, type InMemoryStorageInternals, type RxStorageInMemoryType } from './inMemoryStorage/types'
-import { RxStorageIntanceInMemory } from './inMemoryStorage/instance'
-import { InMemoryInternal } from './inMemoryStorage/internal'
+
 import { wrappedKeyEncryptionStorage } from '@pluto-encrypted/encryption'
 
-const internalInstance = new Map<string, InMemoryInternal<any>>()
+import {
+  getRxStorageMemory
+} from 'rxdb/plugins/storage-memory'
 
-function getRxStorageMemory<RxDocType>(settings: InMemorySettings = {}): RxStorageInMemoryType<RxDocType> {
-  const inMemoryInstance: RxStorageInMemoryType<any> = {
-    name: 'in-memory',
-    statics: RxStorageDefaultStatics,
-    async createStorageInstance<RxDocType>(params: RxStorageInstanceCreationParams<RxDocType, InMemorySettings>): Promise<RxStorageInstance<RxDocType, InMemoryStorageInternals<RxDocType>, InMemorySettings, any>> {
-      if (params.schema.keyCompression) {
-        throw newRxError('UT5', { args: { databaseName: params.databaseName, collectionName: params.collectionName } })
-      }
-      const existingInstance = internalInstance.get(params.databaseName)
-      if (!existingInstance) {
-        internalInstance.set(params.databaseName, new InMemoryInternal<RxDocType>(0))
-      } else {
-        existingInstance.refCount++
-        internalInstance.set(params.databaseName, existingInstance)
-      }
-      return new RxStorageIntanceInMemory(
-        this,
-        params.databaseName,
-        params.collectionName,
-        params.schema,
-        internalInstance.get(params.databaseName)!,
-        settings
-      )
-    }
-  }
-  return inMemoryInstance
-}
 
 /**
  * InMemory storage
  * @description Use this as storage in our RXDB database. For now there is no initialisation settings, so you can use it out of the box.
  */
-const storage: RxStorage<any, any> = wrappedKeyEncryptionStorage({
+const storage = wrappedKeyEncryptionStorage({
   storage: getRxStorageMemory()
 })
 

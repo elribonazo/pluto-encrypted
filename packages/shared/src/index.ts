@@ -4,12 +4,20 @@
  * @module shared
  * @description Shared is used by other dependencies of pluto-encrypted to reduce code duplication.
  */
-import { RxDBEncryptedMigrationPlugin } from '@pluto-encrypted/encryption'
-import { RxDBJsonDumpPlugin } from 'rxdb/plugins/json-dump'
-import { RxDBQueryBuilderPlugin } from 'rxdb/plugins/query-builder'
-import { CollectionsOfDatabase, RxCollectionCreator, addRxPlugin, createRxDatabase, removeRxDatabase, type MangoQuerySelector, type RxDocumentData, type RxJsonSchema, RxDatabase, RxDatabaseCreator, RxDumpDatabase, RxStorage } from 'rxdb'
-export type { RxDocumentMeta, PlainJsonValue, PropertyType, PlainSimpleJsonObject } from 'rxdb/dist/types/types'
-export type { MangoQuerySelector, RxAttachmentDataBase, MangoQueryOperators, RxDocumentData, RxAttachmentData } from 'rxdb'
+import {
+  type MangoQuerySelector,
+  type RxDocumentData,
+  type RxJsonSchema,
+  RxDatabaseCreator
+} from 'rxdb'
+
+export type {
+  RxDocumentMeta,
+  PlainJsonValue,
+  PropertyType,
+  PlainSimpleJsonObject
+} from 'rxdb/dist/types/types'
+
 
 export type ExtractStaticMethods<T> = {
   [K in keyof T as T[K] extends (...args: any[]) => any ? K : never]: T[K];
@@ -248,65 +256,3 @@ export function getPrivateKeyValue<RxDocType>(document: RxDocumentData<RxDocType
 
 export type ValuesOf<T> = T[keyof T]
 export type DBOptions = RxDatabaseCreator;
-
-
-export class DatabaseBase<Collections = CollectionsOfDatabase>  {
-  private _db!: RxDatabase<Collections, any, any>
-
-  get db() {
-    if (!this._db) {
-      throw new Error('Start Pluto first.')
-    }
-    return this._db
-  }
-
-  getCollection(name: string) {
-    if (!this.db.collections[name]) {
-      throw new Error("Collection does not exist")
-    }
-    return this.db.collections[name]
-  }
-
-  constructor(
-    private readonly dbOptions: DBOptions
-  ) {
-    addRxPlugin(RxDBQueryBuilderPlugin)
-    addRxPlugin(RxDBJsonDumpPlugin)
-    addRxPlugin(RxDBEncryptedMigrationPlugin)
-  }
-
-  async backup() {
-    return await this.db.exportJSON()
-  }
-
-  /**
-   * Use with caution, this will remove all entries from database
-   * and then destroy the database itself.
-   */
-  async clear() {
-    const storages = Array.from(this.db.storageInstances.values())
-    for (const storage of storages) {
-      await storage.cleanup(Infinity)
-    }
-    await removeRxDatabase(this.dbOptions.name, this.db.storage)
-  }
-
-  /**
-   * Start the database and build collections
-   */
-  async start(collections?: {
-    [name: string]: RxCollectionCreator<any>
-  }): Promise<void> {
-    const { dbOptions } = this
-    if (!this._db) {
-      this._db = await createRxDatabase<Collections>({
-        ...dbOptions,
-        multiInstance: false
-      })
-    }
-    if (collections) {
-      const extendedCollections = collections ? collections : {};
-      await this._db.addCollections(extendedCollections);
-    }
-  }
-}

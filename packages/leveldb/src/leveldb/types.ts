@@ -1,5 +1,5 @@
 import { type Level } from 'level'
-import { type DefaultPreparedQuery, type RxDocumentData, type RxJsonSchema, type RxStorage } from 'rxdb'
+import { PreparedQuery, type RxDocumentData, type RxJsonSchema, type RxStorage } from 'rxdb'
 
 /**
  * Index of a table can be a string or a number
@@ -20,7 +20,7 @@ export type LevelDBDataIndex = Map<IndexType, IndexType[]>
  * Query type for LevelDB
  */
 export type LevelDBType = Level<string, string>
-export type LevelDBPreparedQuery<DocType> = DefaultPreparedQuery<DocType>
+export type LevelDBPreparedQuery<DocType> = PreparedQuery<DocType>
 export type LevelDBInternalConstructor<RxDocType> = {
   dbPath: string
   refCount: number

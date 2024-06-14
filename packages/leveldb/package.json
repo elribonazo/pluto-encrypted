@@ -20,7 +20,7 @@
     "clean-packages": "rm -rf node_modules && rm -rf build",
     "build": "rm -rf build && npx rollup -c rollup/rollup.mjs",
     "coverage": "npx vitest run --coverage && npx istanbul-badges-readme",
-    "test": "NODE_ENV=debug vitest --run tests/*.test.ts",
+    "test2": "NODE_ENV=debug vitest --run tests/*.test.ts",
     "test:watch": "NODE_ENV=debug vitest tests/*.test.ts",
     "test:debug": "NODE_ENV=debug vitest tests/*.test.ts --inspect-brk --pool threads --poolOptions.threads.singleThread"
   },
@@ -38,7 +38,7 @@
     "module-error": "^1.0.2",
     "pull-level": "^2.0.4",
     "pull-stream": "^3.7.0",
-    "rxdb": "^14.17.0",
+    "rxdb": "^15.24.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

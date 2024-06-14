@@ -1,27 +1,35 @@
 import AsyncTestUtil from 'async-test-util'
-import { type ExtractDocumentTypeFromTypedRxJsonSchema, type RxJsonSchema, flatClone, overwritable, toTypedRxJsonSchema } from 'rxdb'
-
+import type {
+  ExtractDocumentTypeFromTypedRxJsonSchema,
+  RxJsonSchema,
+} from 'rxdb'
 import {
-  type SimpleHumanV3DocumentType,
-  type HumanWithSubOtherDocumentType,
-  type NestedHumanDocumentType,
-  type DeepNestedHumanDocumentType,
-  type EncryptedHumanDocumentType,
-  type EncryptedObjectHumanDocumentType,
-  type EncryptedDeepHumanDocumentType,
-  type CompoundIndexDocumentType,
-  type CompoundIndexNoStringDocumentType,
-  type HeroArrayDocumentType,
-  type SimpleHeroArrayDocumentType,
-  type RefHumanDocumentType,
-  type RefHumanNestedDocumentType,
-  type AverageSchemaDocumentType,
-  type PointDocumentType,
-  type HumanWithTimestampDocumentType,
-  type BigHumanDocumentType,
-  type NostringIndexDocumentType,
-  type NoIndexHumanDocumentType,
-  type HumanWithCompositePrimary
+  flatClone,
+  overwritable,
+  toTypedRxJsonSchema
+} from 'rxdb'
+
+import type {
+  SimpleHumanV3DocumentType,
+  HumanWithSubOtherDocumentType,
+  NestedHumanDocumentType,
+  DeepNestedHumanDocumentType,
+  EncryptedHumanDocumentType,
+  EncryptedObjectHumanDocumentType,
+  EncryptedDeepHumanDocumentType,
+  CompoundIndexDocumentType,
+  CompoundIndexNoStringDocumentType,
+  HeroArrayDocumentType,
+  SimpleHeroArrayDocumentType,
+  RefHumanDocumentType,
+  RefHumanNestedDocumentType,
+  AverageSchemaDocumentType,
+  PointDocumentType,
+  HumanWithTimestampDocumentType,
+  BigHumanDocumentType,
+  NostringIndexDocumentType,
+  NoIndexHumanDocumentType,
+  HumanWithCompositePrimary
 } from './schema-objects'
 
 export const humanSchemaLiteral = overwritable.deepFreezeWhenDevMode({
@@ -934,7 +942,7 @@ export const refHumanNested: RxJsonSchema<RefHumanNestedDocumentType> = overwrit
 /**
  * an average schema used in performance-tests
  */
-export function averageSchema (): RxJsonSchema<AverageSchemaDocumentType> {
+export function averageSchema(): RxJsonSchema<AverageSchemaDocumentType> {
   const ret: RxJsonSchema<AverageSchemaDocumentType> = {
     title: 'averageSchema_' + AsyncTestUtil.randomString(5), // randomisation used so hash differs
     version: 0,
@@ -1268,7 +1276,7 @@ export const humanIdAndAgeIndex: RxJsonSchema<{ id: string, name: string, age: n
   ]
 })
 
-export function enableKeyCompression<RxDocType> (
+export function enableKeyCompression<RxDocType>(
   schema: RxJsonSchema<RxDocType>
 ): RxJsonSchema<RxDocType> {
   const ret = flatClone(schema)

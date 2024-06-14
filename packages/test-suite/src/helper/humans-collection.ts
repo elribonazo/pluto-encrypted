@@ -1,11 +1,24 @@
 import clone from 'clone'
+import type {
+  RxStorage,
+  RxCollection,
+  RxJsonSchema,
+  RxDatabase,
+  MigrationStrategies,
+  RxAttachmentCreator
+} from 'rxdb'
+import {
+  createRxDatabase,
+  randomCouchString,
+} from 'rxdb'
+
 import * as schemas from './schemas'
 import * as schemaObjects from './schema-objects'
+import type { HumanDocumentType } from './schemas'
 
-import { type HumanDocumentType } from './schemas'
-import { type RxStorage, type RxCollection, createRxDatabase, randomCouchString, type RxJsonSchema, type RxDatabase, type MigrationStrategies, type RxAttachmentCreator } from 'rxdb'
 
-export async function create (
+
+export async function create(
   size: number = 20,
   collectionName: string = 'human',
   multiInstance: boolean = true,
@@ -44,7 +57,7 @@ export async function create (
   return collections[collectionName]!
 }
 
-export async function createBySchema<RxDocumentType = {}> (
+export async function createBySchema<RxDocumentType = {}>(
   schema: RxJsonSchema<RxDocumentType>,
   name = 'human',
   storage: RxStorage<any, any>
@@ -70,7 +83,7 @@ export async function createBySchema<RxDocumentType = {}> (
   return collections[name]!
 }
 
-export async function createAttachments (
+export async function createAttachments(
   size = 20,
   name = 'human',
   multiInstance = true,
@@ -112,7 +125,7 @@ export async function createAttachments (
   return collections[name]!
 }
 
-export async function createNoCompression (
+export async function createNoCompression(
   size = 20,
   name = 'human',
   storage: RxStorage<any, any>
@@ -147,7 +160,7 @@ export async function createNoCompression (
   return collections[name]!
 }
 
-export async function createAgeIndex (
+export async function createAgeIndex(
   amount = 20,
   storage: RxStorage<any, any>
 ): Promise<RxCollection<HumanDocumentType>> {
@@ -175,17 +188,17 @@ export async function createAgeIndex (
   return collections.humana
 }
 
-export async function multipleOnSameDB (
+export async function multipleOnSameDB(
   size = 10,
   storage: RxStorage<any, any>
 ): Promise<{
-    db: RxDatabase<{
-      human: RxCollection<HumanDocumentType>
-      human2: RxCollection<HumanDocumentType>
-    }>
-    collection: RxCollection<HumanDocumentType>
-    collection2: RxCollection<HumanDocumentType>
-  }> {
+  db: RxDatabase<{
+    human: RxCollection<HumanDocumentType>
+    human2: RxCollection<HumanDocumentType>
+  }>
+  collection: RxCollection<HumanDocumentType>
+  collection2: RxCollection<HumanDocumentType>
+}> {
   const db = await createRxDatabase<{
     human: RxCollection<HumanDocumentType>
     human2: RxCollection<HumanDocumentType>
@@ -225,7 +238,7 @@ export async function multipleOnSameDB (
   }
 }
 
-export async function createNested (
+export async function createNested(
   amount = 5,
   storage: RxStorage<any, any>
 ): Promise<RxCollection<schemaObjects.NestedHumanDocumentType>> {
@@ -253,7 +266,7 @@ export async function createNested (
   return collections.nestedhuman
 }
 
-export async function createDeepNested (
+export async function createDeepNested(
   amount = 5,
   storage: RxStorage<any, any>
 ): Promise<RxCollection<schemaObjects.DeepNestedHumanDocumentType>> {
@@ -280,7 +293,7 @@ export async function createDeepNested (
   return collections.nestedhuman
 }
 
-export async function createPrimary (
+export async function createPrimary(
   amount = 10,
   name = randomCouchString(10),
   storage: RxStorage<any, any>
@@ -310,7 +323,7 @@ export async function createPrimary (
   return collections.human
 }
 
-export async function createHumanWithTimestamp (
+export async function createHumanWithTimestamp(
   amount = 0,
   databaseName = randomCouchString(10),
   multiInstance = true,
@@ -341,7 +354,7 @@ export async function createHumanWithTimestamp (
   return collections.humans
 }
 
-export async function createMigrationCollection (
+export async function createMigrationCollection(
   storage: RxStorage<any, any>,
   amount = 0,
   addMigrationStrategies: MigrationStrategies = {},
@@ -400,7 +413,7 @@ export async function createMigrationCollection (
   return cols2[colName]
 }
 
-export async function createRelated (
+export async function createRelated(
   storage: RxStorage<any, any>,
   name = randomCouchString(10)
 ): Promise<RxCollection<schemaObjects.RefHumanDocumentType>> {
@@ -428,7 +441,7 @@ export async function createRelated (
   return collections.human
 }
 
-export async function createRelatedNested (
+export async function createRelatedNested(
   storage: RxStorage<any, any>,
   name = randomCouchString(10)
 ): Promise<RxCollection<schemaObjects.RefHumanNestedDocumentType>> {
@@ -456,7 +469,7 @@ export async function createRelatedNested (
   return collections.human
 }
 
-export async function createIdAndAgeIndex (
+export async function createIdAndAgeIndex(
   storage: RxStorage<any, any>,
   amount = 20
 ): Promise<RxCollection<schemaObjects.HumanWithIdAndAgeIndexDocumentType>> {

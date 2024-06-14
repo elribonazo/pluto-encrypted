@@ -1,6 +1,37 @@
-import { clone, randomString } from 'async-test-util'
-import { type MangoQuery, type RxDocumentData, type RxJsonSchema, type RxStorage, type RxStorageInstance, createRxDatabase, deepFreeze, ensureNotFalsy, fillWithDefaultSettings, getPrimaryFieldOfPrimaryKey, getQueryMatcher, getQueryPlan, getSortComparator, lastOfArray, newRxError, normalizeMangoQuery, now, randomCouchString } from 'rxdb'
-import { type describe, type it, type beforeEach, type afterEach } from 'vitest'
+import assert from 'assert';
+import {
+  clone,
+  randomString
+} from 'async-test-util'
+import type {
+  MangoQuery,
+  RxDocumentData,
+  RxJsonSchema,
+  RxStorage,
+  RxStorageInstance,
+} from 'rxdb'
+import {
+  createRxDatabase,
+  deepFreeze,
+  ensureNotFalsy,
+  fillWithDefaultSettings,
+  getPrimaryFieldOfPrimaryKey,
+  getQueryMatcher,
+  getQueryPlan,
+  getSortComparator,
+  lastOfArray,
+  newRxError,
+  normalizeMangoQuery,
+  now,
+  randomCouchString
+} from 'rxdb'
+import type {
+  describe,
+  it,
+  beforeEach,
+  afterEach
+} from 'vitest'
+
 export interface RandomDoc {
   id: string
   equal: string
@@ -29,7 +60,7 @@ export interface OptionalValueTestDoc { key: string, value?: string }
 export const TEST_DATA_CHARSET = '0987654321ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzäöüÖÄßÜ[]{}\''
 export const TEST_DATA_CHARSET_LAST_SORTED = ensureNotFalsy(lastOfArray(TEST_DATA_CHARSET.split('').sort()))
 // const someEmojis = '😊💩👵🍌';
-export function randomStringWithSpecialChars (length: number) {
+export function randomStringWithSpecialChars(length: number) {
   return randomString(length, TEST_DATA_CHARSET)
 }
 
@@ -37,7 +68,7 @@ export function randomStringWithSpecialChars (length: number) {
  * @returns a format of the query that can be used with the storage
  * when calling RxStorageInstance().query()
  */
-export function prepareQuery<RxDocType> (schema, mutateableQuery) {
+export function prepareQuery<RxDocType>(schema, mutateableQuery) {
   if (!mutateableQuery.sort) {
     throw newRxError('SNH', {
       query: mutateableQuery
@@ -55,7 +86,7 @@ export function prepareQuery<RxDocType> (schema, mutateableQuery) {
   }
 }
 
-export function getNestedDocSchema () {
+export function getNestedDocSchema() {
   const schema: RxJsonSchema<RxDocumentData<NestedDoc>> = fillWithDefaultSettings({
     version: 0,
     primaryKey: 'id',
@@ -89,7 +120,7 @@ export function getNestedDocSchema () {
   return schema
 }
 
-export function getWriteData (
+export function getWriteData(
   ownParams: Partial<RxDocumentData<TestDocType>> = {}
 ): RxDocumentData<TestDocType> {
   return Object.assign(
@@ -107,7 +138,7 @@ export function getWriteData (
   )
 }
 
-export function getTestDataSchema (): RxJsonSchema<RxDocumentData<TestDocType>> {
+export function getTestDataSchema(): RxJsonSchema<RxDocumentData<TestDocType>> {
   return fillWithDefaultSettings({
     version: 0,
     type: 'object',
@@ -195,7 +226,7 @@ export interface TestCorrectQueriesInput<RxDocType> {
   } | undefined>
 }
 
-export function withIndexes<RxDocType> (
+export function withIndexes<RxDocType>(
   schema: RxJsonSchema<RxDocType>,
   indexes: string[][]
 ): RxJsonSchema<RxDocType> {
@@ -204,14 +235,14 @@ export function withIndexes<RxDocType> (
   return schema
 }
 
-export function testCorrectQueries<RxDocType> (
+export function testCorrectQueries<RxDocType>(
   suite: TestSuite,
   testStorage: RxTestStorage,
   input: TestCorrectQueriesInput<RxDocType>
 ) {
   const { it, describe, beforeEach, afterEach } = suite
   let storage: RxStorage<any, any>
-  let storageInstance: RxStorageInstance<RxDocType, any, any, any>
+  let storageInstance: RxStorageInstance<RxDocType, any, any, any> | undefined
 
   describe(`Testing - ${input.testTitle}`, () => {
     beforeEach(async () => {
@@ -221,7 +252,7 @@ export function testCorrectQueries<RxDocType> (
     afterEach(async () => {
       if (storageInstance) {
         await storageInstance.cleanup(Infinity)
-        await storageInstance.close()
+        storageInstance = undefined
       }
     })
 
@@ -230,9 +261,9 @@ export function testCorrectQueries<RxDocType> (
     }
 
     it(input.testTitle, async ({ expect }) => {
-      const schema = fillWithDefaultSettings(clone(input.schema))
-      const primaryPath = getPrimaryFieldOfPrimaryKey(schema.primaryKey)
-      storageInstance = await storage.createStorageInstance<RxDocType>({
+      const schema = fillWithDefaultSettings(clone(input.schema));
+      const primaryPath = getPrimaryFieldOfPrimaryKey(schema.primaryKey);
+      const storageInstance = await storage.createStorageInstance<RxDocType>({
         databaseInstanceToken: randomCouchString(10),
         databaseName: randomCouchString(12),
         collectionName: randomCouchString(12),
@@ -240,8 +271,7 @@ export function testCorrectQueries<RxDocType> (
         options: {},
         multiInstance: false,
         devMode: true
-      })
-      await storageInstance.cleanup(Infinity)
+      });
 
       const rawDocsData = input.data.map(row => {
         const writeData = Object.assign(
@@ -255,20 +285,22 @@ export function testCorrectQueries<RxDocType> (
             },
             _rev: EXAMPLE_REVISION_1
           }
-        )
-        return writeData
-      })
-
+        );
+        return writeData;
+      });
       await storageInstance.bulkWrite(
         rawDocsData.map(document => ({ document })),
         testQueryContext
-      )
+      );
 
       const database = await createRxDatabase({
         name: randomCouchString(10),
         storage,
+        eventReduce: true,
+        ignoreDuplicate: true,
         allowSlowCount: true
       })
+
       const collections = await database.addCollections({
         test: {
           schema: input.schema
@@ -277,70 +309,120 @@ export function testCorrectQueries<RxDocType> (
       const collection = collections.test
       await collection.bulkInsert(input.data)
 
+
+
       for (const queryData of input.queries) {
         if (!queryData) {
-          continue
+          continue;
         }
 
-        const queryForStorage = clone(queryData.query) as MangoQuery<RxDocType>
+        const queryForStorage = clone(queryData.query) as MangoQuery<RxDocType>;
         if (!queryForStorage.selector) {
-          queryForStorage.selector = {}
+          queryForStorage.selector = {};
         }
-
-        const normalizedQuery = deepFreeze(normalizeMangoQuery(schema, queryForStorage))
-        const skip = normalizedQuery.skip ? normalizedQuery.skip : 0
-        const limit = normalizedQuery.limit ? normalizedQuery.limit : Infinity
-        const skipPlusLimit = skip + limit
+        (queryForStorage.selector as any)._deleted = false;
+        if (queryForStorage.index) {
+          (queryForStorage.index as any).unshift('_deleted');
+        }
+        const normalizedQuery = deepFreeze(normalizeMangoQuery(schema, queryForStorage));
+        const skip = normalizedQuery.skip ? normalizedQuery.skip : 0;
+        const limit = normalizedQuery.limit ? normalizedQuery.limit : Infinity;
+        const skipPlusLimit = skip + limit;
 
         const preparedQuery = prepareQuery<RxDocType>(
           schema,
           normalizedQuery
-        )
+        );
 
         // Test output of RxStorageStatics
-        const queryMatcher = getQueryMatcher(schema, normalizedQuery)
-        const sortComparator = getSortComparator(schema, normalizedQuery)
+        const queryMatcher = getQueryMatcher(schema, normalizedQuery);
+        const sortComparator = getSortComparator(schema, normalizedQuery);
         const staticsResult = rawDocsData.slice(0)
           .filter(d => queryMatcher(d))
           .sort(sortComparator)
-          .slice(skip, skipPlusLimit)
-        const resultStaticsIds = staticsResult.map(d => (d as any)[primaryPath])
+          .slice(skip, skipPlusLimit);
+        const resultStaticsIds = staticsResult.map(d => (d as any)[primaryPath]);
+        try {
+          assert.deepStrictEqual(resultStaticsIds, queryData.expectedResultDocIds);
+        } catch (err) {
+          console.log('WRONG QUERY RESULTS FROM STATICS: ' + queryData.info);
+          console.dir({
+            queryData,
+            resultStaticsIds
+          });
 
-        expect(resultStaticsIds, 'expectedResultDocIds does not match').toStrictEqual(queryData.expectedResultDocIds)
+          throw err;
+        }
+
+
+        // Test correct selectorSatisfiedByIndex
+        if (typeof queryData.selectorSatisfiedByIndex !== 'undefined') {
+          const queryPlan = getQueryPlan(schema, normalizedQuery);
+          try {
+            assert.strictEqual(
+              queryPlan.selectorSatisfiedByIndex,
+              queryData.selectorSatisfiedByIndex
+            );
+          } catch (err) {
+            console.log('WRONG selectorSatisfiedByIndex IN QUERY PLAN: ' + queryData.info);
+            console.dir(queryData);
+            console.dir(queryPlan);
+            throw err;
+          }
+        }
 
         // Test output of RxStorageInstance.query();
-        const resultFromStorage = await storageInstance.query(preparedQuery)
-        const resultIds = resultFromStorage.documents.map(d => (d as any)[primaryPath])
-
-        expect(resultIds).toStrictEqual(queryData.expectedResultDocIds)
+        const resultFromStorage = await storageInstance.query(preparedQuery);
+        const resultIds = resultFromStorage.documents.map(d => (d as any)[primaryPath]);
+        try {
+          assert.deepStrictEqual(resultIds, queryData.expectedResultDocIds);
+        } catch (err) {
+          console.log('WRONG QUERY RESULTS FROM RxStorageInstance.query(): ' + queryData.info);
+          console.dir({
+            resultIds,
+            queryData,
+            preparedQuery
+          });
+          throw err;
+        }
 
         // Test output of RxCollection.find()
-        const rxQuery = collection.find(queryData.query)
-        const resultFromCollection = await rxQuery.exec()
-        const resultFromCollectionIds = resultFromCollection.map(d => d.primary)
+        const rxQuery = collection.find(queryData.query);
+        const resultFromCollection = await rxQuery.exec();
+        const resultFromCollectionIds = resultFromCollection.map(d => d.primary);
+        try {
+          assert.deepStrictEqual(resultFromCollectionIds, queryData.expectedResultDocIds);
+        } catch (err) {
+          console.log('WRONG QUERY RESULTS FROM RxCollection.find(): ' + queryData.info);
+          console.dir(queryData);
+          throw err;
+        }
+        const byId = await collection.findByIds(resultFromCollectionIds).exec();
+        resultFromCollectionIds.forEach(id => assert.ok(byId.has(id), 'findById must have same output'));
 
-        expect(resultFromCollectionIds).toStrictEqual(queryData.expectedResultDocIds)
 
         // Test output of .count()
         if (
           !queryData.query.limit &&
           !queryData.query.skip
         ) {
-          const countResult = await storageInstance.count(preparedQuery)
-          expect(countResult.count).toStrictEqual(queryData.expectedResultDocIds.length)
+          const countResult = await storageInstance.count(preparedQuery);
+          try {
+            assert.strictEqual(
+              countResult.count,
+              queryData.expectedResultDocIds.length
+            );
+          } catch (err) {
+            console.log('WRONG QUERY RESULTS FROM .count(): ' + queryData.info);
+            console.dir(queryData);
+            throw err;
+          }
         }
       }
-
-      await storageInstance.bulkWrite(
-        rawDocsData.map(document => ({
-          document: {
-            ...document, _deleted: true, _rev: '1'
-          }
-        })),
-        testQueryContext
-      )
-      await storageInstance.cleanup(Infinity)
-      await database.remove()
+      await Promise.all([
+        database.remove(),
+        storageInstance.close()
+      ]);
     })
   })
 }

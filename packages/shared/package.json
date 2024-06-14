@@ -27,7 +27,7 @@
   "author": "elribonazo@gmail.com",
   "license": "Apache-2.0",
   "dependencies": {
-    "rxdb": "^14.17.0",
+    "rxdb": "^15.24.0",
     "uuid": "^9.0.1",
     "@pluto-encrypted/encryption": "1.11.0"
   },

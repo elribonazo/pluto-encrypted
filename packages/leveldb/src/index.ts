@@ -4,8 +4,6 @@
  * @description This is a RXDB LevelDB storage that supports encryption middleware.
  * In order to use this in your pluto-encrypted database you must write the following code:
  * Creating a LevelDB compatible storage is very simple.
- *
- * 
  * ```typescript
  * import { createLevelDBStorage } from "@pluto-encrypted/leveldb";
  * import { Database } from "@pluto-encrypted/database";
@@ -20,19 +18,40 @@
  *       })
  * });
  * ```
- * 
  */
-import { RxStorageDefaultStatics, type RxStorageInstance, type RxStorageInstanceCreationParams, newRxError } from 'rxdb'
-import { type LevelDBInternalConstructor, type LevelDBSettings, type LevelDBStorageInternals, type RxStorageLevelDBType } from './leveldb/types'
+import type {
+  RxStorageInstance,
+  RxStorageInstanceCreationParams,
+} from 'rxdb'
 
-import { RxStorageIntanceLevelDB } from './leveldb/instance'
-import { LevelDBInternal } from './leveldb/internal'
-import { wrappedKeyEncryptionStorage } from '@pluto-encrypted/encryption'
+import {
+  newRxError,
+  RXDB_VERSION
+} from 'rxdb'
+
+import type {
+  LevelDBInternalConstructor,
+  LevelDBSettings,
+  LevelDBStorageInternals,
+  RxStorageLevelDBType
+} from './leveldb/types'
+
+import {
+  RxStorageIntanceLevelDB
+} from './leveldb/instance'
+
+import {
+  LevelDBInternal
+} from './leveldb/internal'
+
+import {
+  wrappedKeyEncryptionStorage
+} from '@pluto-encrypted/encryption'
 
 export type * from './leveldb/types'
 
 export type { MangoQuerySelectorAndIndex, CRDTSchemaOptions, RxQueryPlanKey, PrimaryKey, StringKeys, TopLevelProperty, MangoQuerySortDirection } from 'rxdb/dist/types/types'
-export type { DefaultPreparedQuery, RxJsonSchema, FilledMangoQuery, CompressionMode, RxQueryPlan, MangoQuery, MangoQueryNoLimit, MangoQuerySortPart } from 'rxdb'
+export type { RxJsonSchema, FilledMangoQuery, CompressionMode, RxQueryPlan, MangoQuery, MangoQueryNoLimit, MangoQuerySortPart } from 'rxdb'
 export type { Level } from 'level'
 export const RX_STORAGE_NAME_LEVELDB = 'leveldb'
 
@@ -47,7 +66,7 @@ const internalInstance = new Map<string, LevelDBInternal<any>>()
 function getRxStorageLevel<RxDocType>(settings: LevelDBSettings): RxStorageLevelDBType<RxDocType> {
   const instance: RxStorageLevelDBType<any> = {
     name: RX_STORAGE_NAME_LEVELDB,
-    statics: RxStorageDefaultStatics,
+    rxdbVersion: RXDB_VERSION,
     async createStorageInstance<RxDocType>(params: RxStorageInstanceCreationParams<RxDocType, LevelDBSettings>): Promise<RxStorageInstance<RxDocType, LevelDBStorageInternals<RxDocType>, LevelDBSettings, any>> {
       if (params.schema.keyCompression) {
         throw newRxError('UT5', { args: { databaseName: params.databaseName, collectionName: params.collectionName } })
