@@ -19,10 +19,10 @@
     "prepublishOnly": "npm run build",
     "clean-packages": "rm -rf node_modules && rm -rf build",
     "build": "rm -rf build && npx rollup -c rollup/rollup.mjs",
-    "coverage": "npx vitest run --coverage --pool threads --poolOptions.threads.singleThread",
-    "test": "NODE_ENV=debug vitest --run tests/*.test.ts --pool threads --poolOptions.threads.singleThread",
-    "test:watch": "NODE_ENV=debug vitest tests/*.test.ts --pool threads --poolOptions.threads.singleThread",
-    "test:debug": "NODE_ENV=debug vitest tests/*.test.ts --inspect-brk --pool threads --poolOptions.threads.singleThread"
+    "coverage": "npx vitest run --coverage",
+    "test": " npx vitest --run tests/*.test.ts",
+    "test:watch": "NODE_ENV=debug vitest tests/*.test.ts",
+    "test:debug": "NODE_ENV=debug vitest tests/*.test.ts --inspect-brk"
   },
   "repository": {
     "type": "git",

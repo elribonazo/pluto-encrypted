@@ -32,6 +32,7 @@ const externals = [
     "rxjs/operators",
     "@faker-js/faker",
     "async-test-util",
+    "rxdb/plugins/test-utils",
     "crypto-js"
 ];
 
