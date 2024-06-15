@@ -1,6 +1,6 @@
 {
   "name": "@pluto-encrypted/test-suite",
-  "version": "1.12.1",
+  "version": "2.0.0",
   "description": "This is a test-suite that works out of the box without cloning rxdb repo or submodule, it does not support replication!!",
   "main": "./build/cjs/index.cjs",
   "module": "./build/esm/index.mjs",
@@ -29,9 +29,15 @@
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
     "async-test-util": "^2.2.1",
-    "rxdb": "15.24.0",
-    "uuid": "^9.0.1",
     "vitest": "^1.0.4"
+  },
+  "peerDependencies": {
+    "rxdb": "15.24.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "rxdb": "15.24.0",
+    "uuid": "^9.0.1"
   },
   "files": [
     "build/*"

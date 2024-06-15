@@ -37,14 +37,18 @@
     "level": "^6.0.1",
     "module-error": "^1.0.2",
     "pull-level": "^2.0.4",
-    "pull-stream": "^3.7.0",
-    "rxdb": "15.24.0",
-    "uuid": "^9.0.1"
+    "pull-stream": "^3.7.0"
   },
   "devDependencies": {
     "@pluto-encrypted/encryption": "2.0.0",
     "@pluto-encrypted/shared": "2.0.0",
-    "@pluto-encrypted/test-suite": "2.0.0"
+    "@pluto-encrypted/test-suite": "2.0.0",
+    "rxdb": "15.24.0",
+    "uuid": "^9.0.1"
+  },
+  "peerDependencies": {
+    "rxdb": "15.24.0",
+    "uuid": "^9.0.1"
   },
   "files": [
     "build/*"

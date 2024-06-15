@@ -31,8 +31,6 @@
   "author": "elribonazo@gmail.com",
   "license": "Apache-2.0",
   "dependencies": {
-    "rxdb": "15.24.0",
-    "uuid": "^9.0.1",
     "@pluto-encrypted/encryption": "2.0.0",
     "@pluto-encrypted/shared": "2.0.0",
     "array-push-at-sort-position": "^4.0.1"
@@ -40,7 +38,13 @@
   "devDependencies": {
     "@pluto-encrypted/encryption": "2.0.0",
     "@pluto-encrypted/shared": "2.0.0",
-    "@pluto-encrypted/test-suite": "2.0.0"
+    "@pluto-encrypted/test-suite": "2.0.0",
+    "rxdb": "15.24.0",
+    "uuid": "^9.0.1"
+  },
+  "peerDependencies": {
+    "rxdb": "15.24.0",
+    "uuid": "^9.0.1"
   },
   "files": [
     "build/*"
