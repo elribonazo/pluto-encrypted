@@ -34,7 +34,7 @@
     "@pluto-encrypted/encryption": "1.11.0",
     "@pluto-encrypted/shared": "1.11.3",
     "array-push-at-sort-position": "^4.0.1",
-    "rxdb": "^15.24.0",
+    "rxdb": "15.24.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

@@ -29,7 +29,7 @@
   "dependencies": {
     "@faker-js/faker": "^8.3.1",
     "async-test-util": "^2.2.1",
-    "rxdb": "^15.24.0",
+    "rxdb": "15.24.0",
     "uuid": "^9.0.1",
     "vitest": "^1.0.4"
   },

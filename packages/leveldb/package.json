@@ -38,7 +38,7 @@
     "module-error": "^1.0.2",
     "pull-level": "^2.0.4",
     "pull-stream": "^3.7.0",
-    "rxdb": "^15.24.0",
+    "rxdb": "15.24.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
