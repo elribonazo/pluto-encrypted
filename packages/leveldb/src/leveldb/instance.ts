@@ -176,7 +176,7 @@ export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
       lowerBound
     );
 
-    let upperBound: any[] = queryPlan.endKeys;
+    const upperBound: any[] = queryPlan.endKeys;
 
     const upperBoundString = getStartIndexStringFromUpperBound(
       this.schema,
