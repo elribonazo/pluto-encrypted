@@ -60,7 +60,7 @@ export const humanSchemaLiteral = overwritable.deepFreezeWhenDevMode({
     }
   },
   required: ['firstName', 'lastName', 'passportId', 'age'],
-  indexes: ['firstName']
+  indexes: ['firstName'],
 } as const)
 const humanSchemaTyped = toTypedRxJsonSchema(humanSchemaLiteral)
 export type HumanDocumentType = ExtractDocumentTypeFromTypedRxJsonSchema<typeof humanSchemaTyped>

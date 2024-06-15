@@ -19,7 +19,7 @@
     "clean-packages": "rm -rf node_modules && rm -rf build",
     "build": "rm -rf build && npx rollup -c rollup/rollup.mjs",
     "coverage": "npx vitest run --coverage && npx istanbul-badges-readme",
-    "testw": "NODE_ENV=debug vitest --run tests/*.test.ts",
+    "test": "NODE_ENV=debug vitest --run tests/*.test.ts",
     "test:watch": "NODE_ENV=debug vitest tests/*.test.ts",
     "test:debug": "NODE_ENV=debug vitest tests/*.test.ts --inspect-brk --pool threads --poolOptions.threads.singleThread"
   },

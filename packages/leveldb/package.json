@@ -19,9 +19,9 @@
     "prepublishOnly": "npm run build",
     "clean-packages": "rm -rf node_modules && rm -rf build",
     "build": "rm -rf build && npx rollup -c rollup/rollup.mjs",
-    "coverage": "npx vitest run --coverage && npx istanbul-badges-readme",
-    "test2": "NODE_ENV=debug vitest --run tests/*.test.ts",
-    "test:watch": "NODE_ENV=debug vitest tests/*.test.ts",
+    "coverage": "npx vitest run --coverage --pool threads --poolOptions.threads.singleThread",
+    "test": "NODE_ENV=debug vitest --run tests/*.test.ts --pool threads --poolOptions.threads.singleThread",
+    "test:watch": "NODE_ENV=debug vitest tests/*.test.ts --pool threads --poolOptions.threads.singleThread",
     "test:debug": "NODE_ENV=debug vitest tests/*.test.ts --inspect-brk --pool threads --poolOptions.threads.singleThread"
   },
   "repository": {

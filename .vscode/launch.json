@@ -61,7 +61,7 @@
     },
     {
       "command": "npm run test",
-      "cwd": "${workspaceFolder}/packages/indexdb",
+      "cwd": "${workspaceFolder}/packages/leveldb",
       "name": "TEST",
       "request": "launch",
       "type": "node-terminal",

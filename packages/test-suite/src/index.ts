@@ -99,7 +99,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
             collectionName: randomCouchString(12),
             schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
             options: {},
-            multiInstance: false,
+            multiInstance: true,
             devMode: false,
             password: randomCouchString(24)
           })
@@ -118,7 +118,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName,
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false,
           password: randomCouchString(24)
         })
@@ -136,7 +136,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const pkey = 'foobar'
@@ -156,7 +156,6 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           }],
           testContext
         )
-
         expect(writeResponse.error).toStrictEqual([])
         const first = writeResponse.success.at(0);
         expect(docData).toStrictEqual(first)
@@ -169,7 +168,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const pkey = 'foobar'
@@ -196,7 +195,6 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           }],
           testContext
         )
-
         expect(writeResponse.success).toStrictEqual([])
         expect(writeResponse.error.at(0)).not.toBe(undefined)
         const first = writeResponse.error.at(0)!
@@ -228,7 +226,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const pkey = 'foobar'
@@ -273,7 +271,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -353,7 +351,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: schema as any,
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const docId = 'foobar'
@@ -373,9 +371,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           }],
           testContext
         )
-
         expect(writeResponse.success.at(0)).not.toBe(undefined)
-
         const insertResponse = writeResponse.success.at(0)
         const insertDataAfterWrite: RxDocumentData<OptionalValueTestDoc> = Object.assign(
           {},
@@ -384,7 +380,6 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
             _rev: insertResponse._rev
           }
         )
-
         const updateResponse = await storageInstance.bulkWrite(
           [{
             previous: insertDataAfterWrite,
@@ -401,15 +396,12 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           }],
           testContext
         )
-
         expect(updateResponse.success.at(0)).not.toBe(undefined)
 
         const updateResponseDoc = updateResponse.success.at(0)!
-
         delete (updateResponseDoc)._deleted
         delete (updateResponseDoc)._rev
         delete (updateResponseDoc)._meta
-
         expect(updateResponseDoc).toStrictEqual({
           key: docId,
           _attachments: {}
@@ -424,7 +416,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -498,7 +490,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const docData: RxDocumentWriteData<TestDocType> = {
@@ -523,7 +515,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         await storageInstance2.bulkWrite(
@@ -550,7 +542,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const pkey = 'foobar'
@@ -612,7 +604,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
                 collectionName: randomCouchString(12),
                 schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
                 options: {},
-                multiInstance: false,
+                multiInstance: true,
                 devMode: false
               })
               await Promise.all(
@@ -645,7 +637,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const umlauts = 'äöüßé'
@@ -731,7 +723,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
             ]
           }),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -765,7 +757,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getTestDataSchema(),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -813,7 +805,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getTestDataSchema(),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -872,8 +864,8 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion(0, '_id' as any),
           options: {},
-          multiInstance: false,
-          devMode: true
+          multiInstance: true,
+          devMode: false
         });
 
         const query: FilledMangoQuery<HumanDocumentType> = {
@@ -962,7 +954,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<{ key: string, value: string }>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -1034,7 +1026,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getTestDataSchema(),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -1116,7 +1108,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema,
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -1210,7 +1202,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema,
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const insertResult = await storageInstance.bulkWrite([
@@ -1260,7 +1252,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema,
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -1303,7 +1295,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema,
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
         const preparedQueryAll = prepareQuery<TestDocType>(
@@ -1338,7 +1330,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getPseudoSchemaForVersion<TestDocType>(0, 'key'),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 
@@ -1379,7 +1371,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
           collectionName: randomCouchString(12),
           schema: getTestDataSchema(),
           options: {},
-          multiInstance: false,
+          multiInstance: true,
           devMode: false
         })
 

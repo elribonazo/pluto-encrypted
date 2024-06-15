@@ -26,6 +26,8 @@ import {
   getPrimaryFieldOfPrimaryKey,
   getQueryMatcher,
   getSortComparator,
+  getStartIndexStringFromLowerBound,
+  getStartIndexStringFromUpperBound,
   now,
 } from 'rxdb'
 
@@ -38,7 +40,11 @@ import type {
   LevelDBSettings,
   RxStorageLevelDBType,
 } from './types'
-import { fixTxPipe } from '@pluto-encrypted/shared'
+import { boundGE, boundGT, boundLE, boundLT, compareDocsWithIndex } from '@pluto-encrypted/shared'
+
+export function getIndexName(index: string[]): string {
+  return index.join(',');
+}
 
 export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
   RxDocType,
@@ -145,65 +151,94 @@ export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
   }
 
   async query(preparedQuery: PreparedQuery<RxDocType>): Promise<RxStorageQueryResult<RxDocType>> {
-    const { queryPlan, query } = preparedQuery
-    const selector = query.selector
-    const selectorKeys = Object.keys(selector)
-    const skip = query.skip ? query.skip : 0
-    const limit = query.limit ? query.limit : Infinity
-    const skipPlusLimit = skip + limit
-    const queryMatcher: QueryMatcher<RxDocumentData<RxDocType>> = getQueryMatcher(
+    const queryPlan = preparedQuery.queryPlan;
+    const query = preparedQuery.query;
+
+    const skip = query.skip ? query.skip : 0;
+    const limit = query.limit ? query.limit : Infinity;
+    const skipPlusLimit = skip + limit;
+
+    let queryMatcher: QueryMatcher<RxDocumentData<RxDocType>> | false = false;
+    if (!queryPlan.selectorSatisfiedByIndex) {
+      queryMatcher = getQueryMatcher(
+        this.schema,
+        preparedQuery.query
+      );
+    }
+
+    const queryPlanFields: string[] = queryPlan.index;
+    const mustManuallyResort = !queryPlan.sortSatisfiedByIndex;
+    const index: string[] | undefined = queryPlanFields;
+    const lowerBound: any[] = queryPlan.startKeys;
+    const lowerBoundString = getStartIndexStringFromLowerBound(
       this.schema,
-      query
-    )
+      index,
+      lowerBound
+    );
 
-    const queryPlanFields: string[] = queryPlan.index
-    const indexes: string[] = []
-    if (queryPlanFields.length === 1) {
-      indexes.push(fixTxPipe(queryPlanFields[0]!))
-    } else {
-      indexes.push(...queryPlanFields.map(field => fixTxPipe(field)))
-    }
+    let upperBound: any[] = queryPlan.endKeys;
 
-    const shouldAddCompoundIndexes = this.schema.indexes?.find((index) => {
-      if (typeof index === 'string') {
-        return indexes.find((index2) => index2 === index)
-      } else {
-        return index.find((subIndex) => {
-          return subIndex === index.find((indexValue) => indexValue === subIndex)
-        })
-      }
-    })
-
-    if (shouldAddCompoundIndexes) {
-      indexes.splice(0, indexes.length)
-      indexes.push(this.collectionName)
-      if (typeof shouldAddCompoundIndexes === 'string') {
-        indexes.push(shouldAddCompoundIndexes)
-      } else {
-        indexes.push(...shouldAddCompoundIndexes)
-      }
-    } else {
-      indexes.unshift(this.collectionName)
-    }
-
-    const indexName: string = `[${indexes.join('+')}]`
+    const upperBoundString = getStartIndexStringFromUpperBound(
+      this.schema,
+      index,
+      upperBound
+    );
+    const indexName = getIndexName(index);
     const docsWithIndex = await this.internals.getIndex(indexName)
-    const documents: Array<RxDocumentData<RxDocType>> = await this.internals.bulkGet(docsWithIndex)
-    let filteredDocuments = documents.filter((document) => {
-      if (selectorKeys.length <= 0) {
-        return true
-      } else {
-        return queryMatcher(document)
+
+    let indexOfLower = (queryPlan.inclusiveStart ? boundGE : boundGT)(
+      docsWithIndex,
+      {
+        indexString: lowerBoundString
+      } as any,
+      compareDocsWithIndex
+    );
+
+    const indexOfUpper = (queryPlan.inclusiveEnd ? boundLE : boundLT)(
+      docsWithIndex,
+      {
+        indexString: upperBoundString
+      } as any,
+      compareDocsWithIndex
+    );
+
+
+    let rows: RxDocumentData<RxDocType>[] = [];
+    let done = false;
+    while (!done) {
+      const currentRow = docsWithIndex[indexOfLower];
+      if (
+        !currentRow ||
+        indexOfLower > indexOfUpper
+      ) {
+        break;
       }
-    })
 
-    const sortComparator = getSortComparator(this.schema, preparedQuery.query)
-    filteredDocuments = filteredDocuments.sort(sortComparator)
+      const [currentDoc] = await this.findDocumentsById([currentRow], false)
 
-    filteredDocuments = filteredDocuments.slice(skip, skipPlusLimit)
-    return {
-      documents: filteredDocuments
+      if (currentDoc && (!queryMatcher || queryMatcher(currentDoc))) {
+        rows.push(currentDoc);
+      }
+
+      if (
+        (rows.length >= skipPlusLimit && !mustManuallyResort)
+      ) {
+        done = true;
+      }
+
+      indexOfLower++;
     }
+
+    if (mustManuallyResort) {
+      const sortComparator = getSortComparator(this.schema, preparedQuery.query);
+      rows = rows.sort(sortComparator);
+    }
+
+    // apply skip and limit boundaries.
+    rows = rows.slice(skip, skipPlusLimit);
+    return Promise.resolve({
+      documents: rows
+    });
   }
 
   async count(preparedQuery: PreparedQuery<RxDocType>): Promise<RxStorageCountResult> {
@@ -244,7 +279,9 @@ export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
   }
 
   async remove(): Promise<void> {
-    await Promise.resolve()
+    this.internals.removed = true;
+    this.internals.clear();
+    await this.close();
   }
 
   conflictResultionTasks(): Observable<RxConflictResultionTask<RxDocType>> {
@@ -306,7 +343,7 @@ export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
 //     const writeRow = bulkInsertDocs[i]!
 //     const docId = writeRow.document[primaryPath]
 //     await this.internals.bulkPut([writeRow.document], this.collectionName, this.schema)
-//     ret.success.push(writeRow.document)
+//     ret.success[docId as any] = writeRow.document
 //   }
 
 //   const bulkUpdateDocs = categorized.bulkUpdateDocs
@@ -314,7 +351,7 @@ export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
 //     const writeRow = bulkUpdateDocs[i]!
 //     const docId = writeRow.document[primaryPath]
 //     await this.internals.bulkPut([writeRow.document], this.collectionName, this.schema)
-//     ret.success.push(writeRow.document)
+//     ret.success[docId as any] = writeRow.document
 //   }
 
 //   if (categorized.eventBulk.events.length > 0) {

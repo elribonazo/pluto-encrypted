@@ -11,6 +11,7 @@ if (process.env.NODE_ENV === "debug") {
 Object.defineProperty(globalThis, "crypto", {
   value: {
     getRandomValues: (arr) => nodeCrypto.getRandomValues(arr),
+    subtle: nodeCrypto.subtle
   },
 });
 

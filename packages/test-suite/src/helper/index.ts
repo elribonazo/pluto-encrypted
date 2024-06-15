@@ -252,7 +252,7 @@ export function testCorrectQueries<RxDocType>(
     afterEach(async () => {
       if (storageInstance) {
         await storageInstance.cleanup(Infinity)
-        storageInstance = undefined
+        await storageInstance.close()
       }
     })
 
@@ -270,7 +270,7 @@ export function testCorrectQueries<RxDocType>(
         schema,
         options: {},
         multiInstance: false,
-        devMode: true
+        devMode: false
       });
 
       const rawDocsData = input.data.map(row => {

@@ -44,7 +44,7 @@ export class LevelDBInternal<RxDocType> implements LevelDBStorageInternals<RxDoc
 
       await pull(
         pullLevel.read(db),
-        pull.filter(row => !Array.isArray(row.value)),
+        pull.filter(row => row && !Array.isArray(row.value)),
         pull.map(row => {
           docsInDbMap.set(row.key, row.value)
           return row
@@ -163,40 +163,76 @@ export class LevelDBInternal<RxDocType> implements LevelDBStorageInternals<RxDoc
   }
 
   async clear() {
-    const db = await this.getInstance()
-    return db.clear()
+    const db = await this.getInstance();
+    return new Promise<void>((resolve, reject) => {
+      db.clear({}, (err) => {
+        if (err) {
+          return reject(err)
+        }
+        return resolve()
+      })
+    })
   }
 
   async close() {
-    return this.db.close()
+    const db = await this.getInstance();
+    return new Promise<void>((resolve, reject) => {
+      db.close((err) => {
+        if (err) {
+          return reject(err)
+        }
+        return resolve()
+      })
+    })
+  }
+
+  private getField(item: RxDocumentData<RxDocType>, fieldName: string) {
+    const splitFieldName = fieldName.split(".");
+    let value
+    while (splitFieldName.length) {
+      const [name] = splitFieldName.splice(0, 1);
+      if (name && item[name] !== undefined) {
+        value = item[name]
+      } else if (name && value && value[name] !== undefined) {
+        value = value[name]
+      }
+    }
+    return value;
+  }
+
+  private encapsulateIndex(item: RxDocumentData<RxDocType>, collectionName: string, requiredIndexes: string[]) {
+    return `[${collectionName}+${requiredIndexes.map((fieldName) => this.getField(item, fieldName)).join("+")}]`
   }
 
   async bulkPut(items: Array<RxDocumentData<RxDocType>>, collectionName: string, schema: Readonly<RxJsonSchema<RxDocumentData<RxDocType>>>) {
-    const primaryKeyKey = typeof schema.primaryKey === 'string' ? schema.primaryKey : schema.primaryKey.key
-    const saferIndexList = safeIndexList(schema)
-
-    for (const item of items) {
-      const shouldDelete = item._deleted
-      const id = getPrivateKeyValue(item, schema)
-      if (shouldDelete) {
-        for (const requiredIndexes of saferIndexList) {
-          const requiredIndex = `[${collectionName}+${requiredIndexes.join('+')}]`
-          await this.removeFromIndex(requiredIndex, id)
+    try {
+      const primaryKeyKey = typeof schema.primaryKey === 'string' ? schema.primaryKey : schema.primaryKey.key
+      const saferIndexList = safeIndexList(schema)
+      for (const item of items) {
+        const shouldDelete = item._deleted
+        const id = getPrivateKeyValue(item, schema)
+        if (shouldDelete) {
+          for (const requiredIndexes of saferIndexList) {
+            const requiredIndex = this.encapsulateIndex(item, collectionName, requiredIndexes)
+            await this.removeFromIndex(requiredIndex, id)
+          }
+          await this.removeFromIndex(`[${collectionName}+${primaryKeyKey}]`, id)
+          await this.removeFromIndex('[all]', id)
+          await this.delete(id)
+          this.documents.delete(id)
+        } else {
+          for (const requiredIndexes of saferIndexList) {
+            const requiredIndex = this.encapsulateIndex(item, collectionName, requiredIndexes)
+            await this.updateIndex(requiredIndex, id)
+          }
+          await this.updateIndex(`[${collectionName}+${primaryKeyKey}]`, id)
+          await this.updateIndex('[all]', id)
+          await this.set(id, item)
+          this.documents.set(id, item)
         }
-        await this.removeFromIndex(`[${collectionName}+${primaryKeyKey}]`, id)
-        await this.removeFromIndex('[all]', id)
-        await this.delete(id)
-        this.documents.delete(id)
-      } else {
-        for (const requiredIndexes of saferIndexList) {
-          const requiredIndex = `[${collectionName}+${requiredIndexes.join('+')}]`
-          await this.updateIndex(requiredIndex, id)
-        }
-        await this.updateIndex(`[${collectionName}+${primaryKeyKey}]`, id)
-        await this.updateIndex('[all]', id)
-        await this.set(id, item)
-        this.documents.set(id, item)
       }
+    } catch (err) {
+      console.log(err);
     }
   }
 }
