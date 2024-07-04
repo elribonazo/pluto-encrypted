@@ -16,4 +16,5 @@ Object.defineProperty(globalThis, "crypto", {
   },
 });
 
-Object.assign(global, { TextDecoder, TextEncoder });
+const _TextUtils = JSON.parse(JSON.stringify({ TextDecoder, TextEncoder }))
+Object.assign(global, _TextUtils)

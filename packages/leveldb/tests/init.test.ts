@@ -4,6 +4,9 @@ import { describe, it, beforeEach, afterEach } from 'vitest';
 import { runTestSuite } from '@pluto-encrypted/test-suite';
 import { createLevelDBStorage } from '../src'
 
+const SegfaultHandler = require('segfault-handler');
+SegfaultHandler.registerHandler('crash.log');
+
 describe("Testing suite", () => {
   describe("Level with dbPath", () => {
     runTestSuite({

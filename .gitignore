@@ -6,3 +6,5 @@ build
 prism-db
 *.tgz
 docs-html
+db/
+crash.log

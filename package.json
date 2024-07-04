@@ -22,7 +22,10 @@
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "gdb": "^0.1.0-pre",
+    "segfault-handler": "^1.3.0"
+  },
   "devDependencies": {
     "@bndynet/typedoc-theme": "^0.0.1",
     "@rollup/plugin-commonjs": "^25.0.0",

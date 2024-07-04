@@ -8,7 +8,6 @@ import type {
   RxDocumentData,
   RxJsonSchema,
   RxStorage,
-  RxStorageInstance,
 } from 'rxdb'
 import {
   createRxDatabase,
@@ -240,29 +239,19 @@ export function testCorrectQueries<RxDocType>(
   testStorage: RxTestStorage,
   input: TestCorrectQueriesInput<RxDocType>
 ) {
-  const { it, describe, beforeEach, afterEach } = suite
-  let storage: RxStorage<any, any>
-  let storageInstance: RxStorageInstance<RxDocType, any, any, any> | undefined
+  const { it, describe } = suite
+  // let storage: RxStorage<any, any>
+  // let storageInstance: RxStorageInstance<RxDocType, any, any, any> | undefined
 
   describe(`Testing - ${input.testTitle}`, () => {
-    beforeEach(async () => {
-      storage = await testStorage.getStorage()
-    })
-
-    afterEach(async () => {
-      if (storageInstance) {
-        await storageInstance.cleanup(Infinity)
-        await storageInstance.close()
-      }
-    })
-
     if (input.notRunIfTrue && input.notRunIfTrue()) {
       return
     }
 
-    it(input.testTitle, async ({ expect }) => {
+    it(input.testTitle, async () => {
       const schema = fillWithDefaultSettings(clone(input.schema));
       const primaryPath = getPrimaryFieldOfPrimaryKey(schema.primaryKey);
+      const storage = await testStorage.getStorage()
       const storageInstance = await storage.createStorageInstance<RxDocType>({
         databaseInstanceToken: randomCouchString(10),
         databaseName: randomCouchString(12),
@@ -372,6 +361,7 @@ export function testCorrectQueries<RxDocType>(
         }
 
         // Test output of RxStorageInstance.query();
+        // TODO: queries arent returning anything
         const resultFromStorage = await storageInstance.query(preparedQuery);
         const resultIds = resultFromStorage.documents.map(d => (d as any)[primaryPath]);
         try {
@@ -421,6 +411,7 @@ export function testCorrectQueries<RxDocType>(
       }
       await Promise.all([
         database.remove(),
+        storageInstance.cleanup(Infinity),
         storageInstance.close()
       ]);
     })
