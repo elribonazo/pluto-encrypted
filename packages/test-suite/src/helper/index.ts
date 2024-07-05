@@ -17,6 +17,7 @@ import {
   getPrimaryFieldOfPrimaryKey,
   getQueryMatcher,
   getQueryPlan,
+  // NOTE: this is making a weird queryPlan
   getSortComparator,
   lastOfArray,
   newRxError,
@@ -78,6 +79,16 @@ export function prepareQuery<RxDocType>(schema, mutateableQuery) {
      * Store the query plan together with the
      * prepared query to save performance.
      */
+  console.log('prepareQueryPlan', schema, mutateableQuery)
+  // NOTE: schema.indexes
+  // => [ [ '_deleted', 'key' ], [ '_meta.lwt', 'key' ] ]
+  // QUESTION: these indexes lead directly to the query...
+  // which then fails find anything with the _meta.lwt,key index ....
+  // which means we get no results
+  // ...
+  // WHY is there this misalignment between setIndex and using indexes
+  // to look results up?
+
   const queryPlan = getQueryPlan<RxDocType>(schema, mutateableQuery)
   return {
     query: mutateableQuery,

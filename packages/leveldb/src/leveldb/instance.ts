@@ -166,6 +166,10 @@ export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
       );
     }
 
+    console.log('queryPlan', queryPlan)
+    // this makes the index .. which is wrong!?
+    // NOTE: it's wrong
+
     const queryPlanFields: string[] = queryPlan.index;
     const mustManuallyResort = !queryPlan.sortSatisfiedByIndex;
     const index: string[] | undefined = queryPlanFields;
@@ -184,7 +188,15 @@ export class RxStorageIntanceLevelDB<RxDocType> implements RxStorageInstance<
       upperBound
     );
     const indexName = getIndexName(index);
+    // => '_meta.lwt,key'
+    // QUESTION: this doesn't seem to map to any of the indexes being entered?
+    // with setIndex
     const docsWithIndex = await this.internals.getIndex(indexName)
+
+    console.log({
+      docsWithIndex
+      // NOTE: this is empty ... which leads to no results
+    })
 
     let indexOfLower = (queryPlan.inclusiveStart ? boundGE : boundGT)(
       docsWithIndex,

@@ -1011,7 +1011,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
 
     describe('.query()', () => {
       // TODO: this test is failing with leveldb
-      it('should find all documents', async ({ expect }) => {
+      it.only('should find all documents', async ({ expect }) => {
         const _storage = await testStorage.getStorage()
         const storageInstance = await _storage.createStorageInstance<{ key: string, value: string }>({
           databaseInstanceToken: randomCouchString(10),
@@ -1080,7 +1080,7 @@ export function runTestSuite(suite: TestSuite, testStorage: RxTestStorage): void
       })
 
       // TODO: tests failing because the query isnt returning any documents with leveldb
-      it.skip('should sort in the correct order', async ({ expect }) => {
+      it('should sort in the correct order', async ({ expect }) => {
         const _storage = await testStorage.getStorage()
         const storageInstance = await _storage.createStorageInstance<{ key: string, value: string }>({
           databaseInstanceToken: randomCouchString(10),

@@ -44,9 +44,9 @@ export class LevelDBInternal<RxDocType> implements LevelDBStorageInternals<RxDoc
 
       await pull(
         pullLevel.read(db),
-        pull.filter(row => row && !Array.isArray(row.value)),
+        pull.filter(row => row && !row.value.match(/^\[.*\]$/)),
         pull.map(row => {
-          docsInDbMap.set(row.key, row.value)
+          docsInDbMap.set(row.key, JSON.parse(row.value))
           return row
         }),
         pull.collectAsPromise()
@@ -128,6 +128,20 @@ export class LevelDBInternal<RxDocType> implements LevelDBStorageInternals<RxDoc
   }
 
   async setIndex(key: string, ids: string[]) {
+    // console.log('setIndex', { key, ids })
+    // QUESTION: why is the value being store in the key?
+    // QUESTION: if setIndex + getIndex are misaligned...
+    //  - then how do we know what these functions SHOULD be doing?
+    //
+    //  setIndex {
+    //    key: '[gbqkcmutflft+false+1barfoopanichbniqax]',
+    //    ids: [ '1barfoopanichbniqax' ]
+    //  }
+
+    //  setIndex {
+    //    key: '[gbqkcmutflft+1720146854091.01+1barfoopanichbniqax]',
+    //    ids: [ '1barfoopanichbniqax' ]
+    //  }
     const db = await this.getInstance()
     await new Promise<void>((resolve, reject) => {
       db.put(key, JSON.stringify(ids), (err) => {
