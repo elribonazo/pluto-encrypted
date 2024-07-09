@@ -8,3 +8,4 @@ prism-db
 docs-html
 db/
 crash.log
+.DS_Store
