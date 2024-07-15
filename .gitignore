@@ -6,3 +6,6 @@ build
 prism-db
 *.tgz
 docs-html
+db/
+crash.log
+.DS_Store

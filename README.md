@@ -1,88 +1,12 @@
 # Pluto Encrypted
+
 Is a community maintained project which aims to bring a scalable and future proof storage solution for Wallet SDK on typescript. By using this package you can ensure that this dependency will fit the AtalaPrism wallet SDK contract and provide the SDK with storage finally.
-
-## Interface
-Edge SDK Pluto interface [v4.0.0](https://input-output-hk.github.io/atala-prism-wallet-sdk-ts/interfaces/Domain.Pluto.html)
-```typescript
-
-export interface Pluto {
-
-    storeCredentialMetadata(metadata: Anoncreds.CredentialRequestMeta, linkSecret: Anoncreds.LinkSecret): Promise<void>;
-
-    fetchCredentialMetadata(linkSecretName: string): Promise<Anoncreds.CredentialRequestMeta | null>;
-
-    start(): Promise<void>;
-
-    storePrismDID(did: DID, keyPathIndex: number, privateKey: PrivateKey, privateKeyMetaId: string | null, alias?: string): Promise<void>;
-
-    storePeerDID(did: DID, privateKeys: Array<PrivateKey>): Promise<void>;
-
-    storeDIDPair(host: DID, receiver: DID, name: string): Promise<void>;
-
-    storeMessage(message: Message): Promise<void>;
-
-    storeMessages(messages: Array<Message>): Promise<void>;
-
-    storePrivateKeys(privateKey: PrivateKey, did: DID, keyPathIndex: number, metaId: string | null): Promise<void>;
-
-    storeMediator(mediator: DID, host: DID, routing: DID): Promise<void>;
-
-    storeCredential(credential: Credential): Promise<void>;
-
-    getAllPrismDIDs(): Promise<PrismDIDInfo[]>;
-
-    getDIDInfoByDID(did: DID): Promise<PrismDIDInfo | null>;
- 
-    getDIDInfoByAlias(alias: string): Promise<PrismDIDInfo[]>;
-
-    getPrismDIDKeyPathIndex(did: DID): Promise<number | null>;
-
-    getPrismLastKeyPathIndex(): Promise<number>;
-
-    getAllPeerDIDs(): Promise<Array<PeerDID>>;
-
-    getDIDPrivateKeysByDID(did: DID): Promise<Array<PrivateKey>>;
-
-    getDIDPrivateKeyByID(id: string): Promise<PrivateKey | null>;
-
-    getAllDidPairs(): Promise<Array<DIDPair>>;
-
-    getPairByDID(did: DID): Promise<DIDPair | null>;
-
-    getPairByName(name: string): Promise<DIDPair | null>;
-
-    getAllMessages(): Promise<Array<Message>>;
-
-    getAllMessagesByDID(did: DID): Promise<Array<Message>>;
-
-    getAllMessagesSent(): Promise<Array<Message>>;
-
-    getAllMessagesReceived(): Promise<Array<Message>>;
-
-    getAllMessagesSentTo(did: DID): Promise<Array<Message>>;
-
-    getAllMessagesReceivedFrom(did: DID): Promise<Array<Message>>;
-
-    getAllMessagesOfType(type: string, relatedWithDID?: DID): Promise<Array<Message>>;
-
-    getAllMessagesByFromToDID(from: DID, to: DID): Promise<Array<Message>>;
-
-    getMessage(id: string): Promise<Message | null>;
-
-    getAllMediators(): Promise<Array<Mediator>>;
-
-    getAllCredentials(): Promise<Array<Credential>>;
-
-    getLinkSecret(linkSecretName?: string): Promise<Anoncreds.LinkSecret | null>;
-
-    storeLinkSecret(linkSecret: Anoncreds.LinkSecret, linkSecretName: string): Promise<void>;
-}
-```
 
 We currently support database wrappers for IndexDB, InMemory, LevelDB.
 We are not going to stop here but ensure that our SDK can be used in any platform and language.
 
-### Documentation & Contribution Guidelines
+## Documentation & Contribution Guidelines
+
 The pluto encrypted documentation is always available on all branches [HERE](https://github.com/elribonazo/pluto-encrypted/blob/master/docs/README.md) but we have also deployed an online version of documentation.
 
 Go to documentation portal [here](https://atala-community-projects.github.io/pluto-encrypted)
@@ -90,7 +14,7 @@ Go to documentation portal [here](https://atala-community-projects.github.io/plu
 Pull requests are WELCOME!! please check the [Contribution guidelines](https://github.com/elribonazo/pluto-encrypted/blob/master/CONTRIBUTION-GUIDELINES.md) first
 
 
-### How to use
+## How to use
 
 We currently provide 3 database storages - InMemory, IndexDB, and LevelDB.
 These modules are designed to be used with [`@atala/prism-wallet-sdk`](https://github.com/input-output-hk/atala-prism-wallet-sdk-ts)
@@ -155,4 +79,14 @@ const apollo = new Apollo()
 const pluto = new Pluto(store, apollo)
 
 const agent = Agent.initialize({ mediatorDID, pluto, apollo })
+```
+
+## Development
+
+### Tests
+
+```bash
+npm install
+npm run build
+npm run test
 ```

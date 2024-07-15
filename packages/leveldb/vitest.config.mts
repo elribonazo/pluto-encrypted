@@ -9,7 +9,13 @@ export default defineConfig({
     terserOptions: { format: { comments: 'all' } },
   },
   test: {
-    reporters: ['verbose'], // or 'verbose'
+    include: [
+      'tests/*.test.ts'
+    ],
+    reporters: [
+      'verbose',
+      // 'tap-flat'
+    ],
     coverage: {
       provider: 'istanbul',
       reporter: isCI ? ['json-summary'] : ['json-summary', "html"],
@@ -23,5 +29,5 @@ export default defineConfig({
         'src/**/*',
       ],
     },
-  }
+  },
 })

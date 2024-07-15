@@ -38,6 +38,8 @@ export function compareDocsWithIndex<RxDocType>(
   a: DocWithIndexString<RxDocType>,
   b: DocWithIndexString<RxDocType>
 ): 1 | 0 | -1 {
+  if (a.indexString === undefined) throw Error(`missing indexString on ${a}`)
+  if (b.indexString === undefined) throw Error(`missing indexString on ${b}`)
   if (a.indexString < b.indexString) {
     return -1
   } else if (a.indexString === b.indexString) {

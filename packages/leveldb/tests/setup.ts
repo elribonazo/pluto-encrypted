@@ -1,5 +1,6 @@
 import "fake-indexeddb/auto";
 import { TextEncoder, TextDecoder } from "util";
+
 import { addRxPlugin } from "rxdb";
 import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
 import nodeCrypto from "crypto";
@@ -15,4 +16,5 @@ Object.defineProperty(globalThis, "crypto", {
   },
 });
 
-Object.assign(global, { TextDecoder, TextEncoder });
+const _TextUtils = JSON.parse(JSON.stringify({ TextDecoder, TextEncoder }))
+Object.assign(global, _TextUtils)

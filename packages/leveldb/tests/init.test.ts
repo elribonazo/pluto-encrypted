@@ -1,10 +1,7 @@
 import "./setup";
 
-
 import { describe, it, beforeEach, afterEach } from 'vitest';
 import { runTestSuite } from '@pluto-encrypted/test-suite';
-
-
 import { createLevelDBStorage } from '../src'
 
 describe("Testing suite", () => {
