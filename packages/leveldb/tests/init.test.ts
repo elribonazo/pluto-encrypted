@@ -13,8 +13,8 @@ describe("Testing suite", () => {
       describe, it, beforeEach, afterEach
     }, {
       name: 'leveldb',
-      getStorage() {
-        return createLevelDBStorage({ dbPath: './db' })
+      getStorage(i = '') {
+        return createLevelDBStorage({ dbPath: './db' + i })
       },
       getPerformanceStorage() {
         return {
