@@ -6,17 +6,18 @@
     "scripts": {
         "start:inmemory": "node src/inmemory.js",
         "start:leveldb": "node src/leveldb.js",
-        "start:indexdb": "node src/leveldb.js"
+        "start:indexdb": "node src/indexdb.js"
     },
     "author": "",
     "license": "ISC",
     "type": "module",
     "dependencies": {
-        "@atala/prism-wallet-sdk": "^4.0.0-rc.1",
+        "@atala/prism-wallet-sdk": "^5.1.0",
         "@pluto-encrypted/database": "^1.15.1",
         "@pluto-encrypted/iagon": "^0.0.0-beta.18",
-        "@pluto-encrypted/inmemory": "^1.12.1",
+        "@pluto-encrypted/inmemory": "^1.12.2",
         "@pluto-encrypted/leveldb": "^1.12.1",
+        "@pluto-encrypted/schemas": "^1.3.5",
         "fake-indexeddb": "^5.0.1",
         "prettier": "^3.0.2"
     },

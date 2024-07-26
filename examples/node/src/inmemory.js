@@ -1,69 +1,73 @@
-import { getDefaultCollections } from '@pluto-encrypted/schemas';
+import InMemory from "@pluto-encrypted/inmemory";
+import SDK from "@atala/prism-wallet-sdk";
 
-async function createTestScenario() {
 
-  const PlutoEncrypted = await import('@pluto-encrypted/database')
-  const { default: InMemory } = await import("@pluto-encrypted/inmemory")
-  const { default: SDK } = await import("@atala/prism-wallet-sdk");
+// TODO: move DID to env
+// https://sit-prism-mediator.atalaprism.io/ - NOTE: currently returning a 504
+// const mediatorDIDString = 'did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y.Vz6Mkhh1e5CEYYq6JBUcTZ6Cp2ranCWRrv7Yax3Le4N59R6dd.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6Imh0dHBzOi8vc2l0LXByaXNtLW1lZGlhdG9yLmF0YWxhcHJpc20uaW8iLCJhIjpbImRpZGNvbW0vdjIiXX19.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6IndzczovL3NpdC1wcmlzbS1tZWRpYXRvci5hdGFsYXByaXNtLmlvL3dzIiwiYSI6WyJkaWRjb21tL3YyIl19fQ'
 
-  const { Database } = PlutoEncrypted;
-  const defaultPassword = new Uint8Array(32).fill(1);
-  const mediatorDID = SDK.Domain.DID.fromString(
-    "did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y.Vz6Mkhh1e5CEYYq6JBUcTZ6Cp2ranCWRrv7Yax3Le4N59R6dd.SeyJ0IjoiZG0iLCJzIjoiaHR0cHM6Ly9iZXRhLW1lZGlhdG9yLmF0YWxhcHJpc20uaW8iLCJyIjpbXSwiYSI6WyJkaWRjb21tL3YyIl19"
-  );
-  const apollo = new SDK.Apollo();
-  const api = new SDK.ApiImpl();
-  const castor = new SDK.Castor(apollo);
-  const pluto = await Database.createEncrypted(
-    {
-      name: `my-db`,
-      encryptionKey: defaultPassword,
-      storage: InMemory,
-      collections: getDefaultCollections()
-    }
-  );
-  const didcomm = new SDK.DIDCommWrapper(apollo, castor, pluto);
-  const mercury = new SDK.Mercury(castor, didcomm, api);
-  const store = new SDK.PublicMediatorStore(pluto);
-  const handler = new SDK.BasicMediatorHandler(mediatorDID, mercury, store);
-  const manager = new SDK.ConnectionsManager(castor, mercury, pluto, handler);
+// local mediator did
+const mediatorDIDString = 'did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y.Vz6Mkhh1e5CEYYq6JBUcTZ6Cp2ranCWRrv7Yax3Le4N59R6dd.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6Imh0dHBzOi8vc2FuZGJveC1tZWRpYXRvci5hdGFsYXByaXNtLmlvIiwiYSI6WyJkaWRjb21tL3YyIl19fQ.SeyJ0IjoiZG0iLCJzIjp7InVyaSI6IndzczovL3NhbmRib3gtbWVkaWF0b3IuYXRhbGFwcmlzbS5pby93cyIsImEiOlsiZGlkY29tbS92MiJdfX0'
+
+async function createAgent () {
+  const mediatorDID = SDK.Domain.DID.fromString(mediatorDIDString)
+
+  const store = new SDK.Store({
+    name: 'test',
+    storage: InMemory,
+    password: Buffer.from("demoapp").toString("hex")
+  })
+
+  const apollo = new SDK.Apollo()
   const seed = apollo.createRandomSeed();
-  const agent = new SDK.Agent(
-    apollo,
-    castor,
-    pluto,
-    mercury,
-    handler,
-    manager,
-    seed.seed,
-  );
+
+  const pluto = new SDK.Pluto(
+    store,
+    apollo
+  )
+
   return {
-    SDK,
-    apollo,
-    seed,
-    agent,
-    mercury,
-    pluto,
-    castor,
-  };
+    agent: SDK.Agent.initialize({ mediatorDID, pluto, apollo, seed: seed.seed }),
+    seed
+  }
 }
 
 (async () => {
 
+  // create the SDK agent
+  const {
+    seed,
+    agent
+  } = await createAgent()
+    .catch(err => console.error('Failed to create the agent', err))
+  console.log('Agent created')
 
-  const { seed, agent, SDK } = await createTestScenario();
+  // start the SDK agent
+  await agent.start()
+    .catch(err => console.error('Failed to start the agent', err))
 
-  agent.addListener(SDK.ListenerKey.MESSAGE, (message) => {
+  console.log('Agent started and mediation has been established')
+
+
+  // listen for new messages
+  agent.addListener(SDK.ListenerKey.MESSAGE, async (message) => {
     console.log("Got new message", message);
-  });
 
-  await agent.start();
+    // await agent.stop()
+    //   .then(() => console.log('Agent stopped'))
+  });
+  
+  console.log()
   console.log(
     `Welcome to PrismEdge Agent, state ${agent.state
     } with mnemonics ${seed.mnemonics.join(", ")}`,
-  );
+  )
+  console.log()
 
+
+  // Send a message
   try {
+    console.log('Creating test message')
     const secondaryDID = await agent.createNewPeerDID([], true);
     const message = new SDK.BasicMessage(
       { content: "Test Message" },
@@ -73,10 +77,19 @@ async function createTestScenario() {
 
     await agent.sendMessage(message.makeMessage());
     await agent.sendMessage(message.makeMessage());
-    console.log("Sent");
+
+    console.log('Test message sent!')
   } catch (err) {
-    console.log(
-      "Safe to ignore, mediator returns null on successfully receiving the message, unpack fails.",
-    );
+    if (/Malformed: Message is not a valid JWE, JWS or JWM/.test(err.message)) {
+      // NOTE: Safe to ignore, mediator returns null on successfully receiving the message, unpack fails.
+      console.log('Test message sent!')
+    } else {
+      throw err
+    }
   }
 })();
+
+
+
+
+
