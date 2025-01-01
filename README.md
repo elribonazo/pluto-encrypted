@@ -1,7 +1,7 @@
 # Pluto Encrypted
 
-> **WARNING:** @elribonazo: I'm no longer going to be maintaining pluto-encrypted in favor of [RIDB](https://github.com/trust0-project/RIDB)
-> RXDB is a robust project so this project can still be used for Identus and other database projects.
+> **WARNING:** @elribonazo: I'm no longer going to be maintaining pluto-encrypted in favor of [RIDB](https://github.com/trust0-project/RIDB).
+> [RXDB](https://rxdb.info/) is a robust project so this project can still be used for Identus and other database projects.
 > What this means is that from now on, I'll prioritise RIDB development over this.
 > Thanks for support
 
