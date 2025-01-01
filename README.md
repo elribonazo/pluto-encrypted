@@ -1,4 +1,10 @@
 # Pluto Encrypted
+
+> **WARNING:** @elribonazo: I'm no longer going to be maintaining pluto-encrypted in favor of [RIDB](https://github.com/trust0-project/RIDB)
+> RXDB is a robust project so this project can still be used for Identus and other database projects.
+> What this means is that from now on, I'll prioritise RIDB development over this.
+> Thanks for support
+
 Is a community maintained project which aims to bring a scalable and future proof storage solution for Wallet SDK on typescript. By using this package you can ensure that this dependency will fit the AtalaPrism wallet SDK contract and provide the SDK with storage finally.
 
 ## Interface
